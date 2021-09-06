@@ -18,6 +18,7 @@ type SprJob struct {
 	JobRand         string
 	LoopIntervalSec int
 	StopFlag        bool
+	LastRuntime     int64
 }
 
 func New(name string) *SprJob {
@@ -27,6 +28,7 @@ func New(name string) *SprJob {
 		JobRand:         fmt.Sprintf("%d", rand.Intn(100000000)+1),
 		LoopIntervalSec: LoopIntervalSec,
 		StopFlag:        false,
+		LastRuntime:     0,
 	}
 	return s
 }
@@ -38,14 +40,21 @@ func (s *SprJob) StartLoop() {
 			if s.StopFlag {
 				return
 			}
-			s.loop()
-			time.Sleep(time.Second * time.Duration(s.LoopIntervalSec))
+			nowUnixTime := time.Now().Unix()
+			toSleepSecs := s.LastRuntime + int64(s.LoopIntervalSec) - nowUnixTime
+			if toSleepSecs <= 0 {
+				s.LastRuntime = nowUnixTime
+				s.loop()
+			} else {
+				time.Sleep(time.Duration(toSleepSecs) * time.Second)
+			}
 		}
 	}()
 }
 
 func (s *SprJob) StopLoop() {
 	s.StopFlag = true
+	s.IsMaster = false
 }
 
 func (s *SprJob) loop() {
@@ -59,16 +68,15 @@ func (s *SprJob) loop() {
 	//any err
 	if err != nil && err != redis.Nil {
 		//log.Println(err)
+		s.IsMaster = false
 		return
 	}
 
 	if err == redis.Nil {
 		//if no value
 		success, err := goredis.RedisClient.SetNX(goredis.Ctx, s.JobName, s.JobRand, time.Second*time.Duration(MasterKeepTime)).Result()
-		if err != nil {
-			return
-		}
-		if !success {
+		if err != nil || !success {
+			s.IsMaster = false
 			return
 		}
 		s.IsMaster = true
