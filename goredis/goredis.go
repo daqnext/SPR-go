@@ -23,6 +23,7 @@ func InitRedisClient(addr string, port int, db int, userName string, password st
 	if err != nil {
 		log.Println("Redis connect failed")
 		log.Println(err)
+		return
 	} else {
 		log.Println("Redis connect success")
 	}

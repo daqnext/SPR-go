@@ -4,11 +4,10 @@ import (
 	"errors"
 	"github.com/daqnext/SPR-go/goredis"
 	"github.com/daqnext/SPR-go/sprjob"
+	"math/rand"
 	"sync"
+	"time"
 )
-
-const keepIntervalSec = 15
-const applyIntervalSec = 15
 
 type SprJobMgr struct {
 	jobMap sync.Map
@@ -22,10 +21,10 @@ type RedisConfig struct {
 	Password string
 }
 
-var Smgr *SprJobMgr
-
-func init() {
-	Smgr = &SprJobMgr{}
+func New() *SprJobMgr {
+	rand.Seed(time.Now().UnixNano())
+	sMgr := &SprJobMgr{}
+	return sMgr
 }
 
 func (smgr *SprJobMgr) InitRedis(config RedisConfig) {
@@ -38,7 +37,7 @@ func (smgr *SprJobMgr) AddJobName(jobName string) error {
 		return errors.New("job already exist")
 	}
 	//new job
-	job := sprjob.New(jobName, keepIntervalSec, applyIntervalSec)
+	job := sprjob.New(jobName)
 	smgr.jobMap.Store(jobName, job)
 	//start loop
 	job.StartLoop()
