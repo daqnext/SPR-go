@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/daqnext/SPR-go/goredis"
 	"github.com/go-redis/redis/v8"
-	"log"
 	"math/rand"
 	"time"
 )
@@ -58,7 +57,7 @@ func (s *SprJob) StopLoop() {
 }
 
 func (s *SprJob) loop() {
-	log.Println(s.JobName, "loop job run")
+	//log.Println(s.JobName, "loop job run")
 	if goredis.RedisClient == nil {
 		return
 	}
