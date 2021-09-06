@@ -59,6 +59,7 @@ func (s *SprJob) StopLoop() {
 func (s *SprJob) loop() {
 	//log.Println(s.JobName, "loop job run")
 	if goredis.RedisClient == nil {
+		s.IsMaster = false
 		return
 	}
 
