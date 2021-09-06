@@ -65,23 +65,9 @@ func (s *SprJob) loop() {
 
 	//check jobname in redis
 	value, err := goredis.RedisClient.Get(goredis.Ctx, s.JobName).Result()
-	//any err
-	if err != nil && err != redis.Nil {
-		//log.Println(err)
-		s.IsMaster = false
-		return
-	}
 
-	if err == redis.Nil {
-		//if no value
-		success, err := goredis.RedisClient.SetNX(goredis.Ctx, s.JobName, s.JobRand, time.Second*time.Duration(MasterKeepTime)).Result()
-		if err != nil || !success {
-			s.IsMaster = false
-			return
-		}
-		s.IsMaster = true
-
-	} else {
+	//get value
+	if err == nil {
 		//value error
 		if value != s.JobRand {
 			s.IsMaster = false
@@ -92,5 +78,20 @@ func (s *SprJob) loop() {
 		//keep master token
 		s.IsMaster = true
 		goredis.RedisClient.Expire(goredis.Ctx, s.JobName, time.Second*time.Duration(MasterKeepTime))
+
+	} else if err == redis.Nil {
+		//if no value
+		success, err := goredis.RedisClient.SetNX(goredis.Ctx, s.JobName, s.JobRand, time.Second*time.Duration(MasterKeepTime)).Result()
+		if err != nil || !success {
+			s.IsMaster = false
+			return
+		}
+		s.IsMaster = true
+
+	} else {
+		//other err
+		s.IsMaster = false
+		return
+
 	}
 }
