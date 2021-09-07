@@ -11,7 +11,7 @@ var Ctx = context.Background()
 
 var RedisClient *redis.Client
 
-func InitRedisClient(addr string, port int, db int, userName string, password string) {
+func InitRedisClient(addr string, port int, db int, userName string, password string) error {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     addr + ":" + strconv.Itoa(port),
 		Username: userName,
@@ -22,10 +22,9 @@ func InitRedisClient(addr string, port int, db int, userName string, password st
 	_, err := rdb.Ping(Ctx).Result()
 	if err != nil {
 		log.Println("Redis connect failed")
-		log.Println(err)
-		return
-	} else {
-		log.Println("Redis connect success")
+		return err
 	}
+	log.Println("Redis connect success")
 	RedisClient = rdb
+	return nil
 }

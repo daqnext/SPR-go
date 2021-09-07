@@ -8,10 +8,9 @@ import (
 )
 
 func Test_usage(t *testing.T) {
-	sMgr := SPR_go.New()
-
+	//new instance
 	//init redis with config
-	//If connect to redis failed, all the job will not be the master
+	//err != nil if connect to redis failed
 
 	//type RedisConfig struct{
 	//	Addr string
@@ -20,16 +19,20 @@ func Test_usage(t *testing.T) {
 	//	UserName string
 	//	Password string
 	//}
-	sMgr.InitRedis(SPR_go.RedisConfig{
-		Addr:     "127.0.0.1",
+	sMgr, err := SPR_go.New(SPR_go.RedisConfig{
+		Addr:     "127.0.0.2",
 		Port:     6379,
 		Db:       5,
 		Password: "123456",
 	})
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	//add job with unique job name which used in redis
 	//the process with same job name will scramble for the master token
-	err := sMgr.AddJobName("testjob")
+	err = sMgr.AddJobName("testjob")
 	if err != nil {
 		log.Println(err)
 	}

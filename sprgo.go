@@ -21,14 +21,14 @@ type RedisConfig struct {
 	Password string
 }
 
-func New() *SprJobMgr {
+func New(config RedisConfig) (*SprJobMgr, error) {
+	err := goredis.InitRedisClient(config.Addr, config.Port, config.Db, config.UserName, config.Password)
+	if err != nil {
+		return nil, errors.New("redis connect error")
+	}
 	rand.Seed(time.Now().UnixNano())
 	sMgr := &SprJobMgr{}
-	return sMgr
-}
-
-func (smgr *SprJobMgr) InitRedis(config RedisConfig) {
-	goredis.InitRedisClient(config.Addr, config.Port, config.Db, config.UserName, config.Password)
+	return sMgr, nil
 }
 
 func (smgr *SprJobMgr) AddJobName(jobName string) error {
