@@ -15,7 +15,7 @@ import (
 )
 
 func Test_usage(t *testing.T) {
-	//new instance
+    //new instance
     //init redis with config
     //If connect to redis failed, return err
 
