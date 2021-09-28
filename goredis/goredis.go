@@ -2,21 +2,24 @@ package goredis
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
 	"log"
 	"strconv"
+
+	"github.com/go-redis/redis/v8"
 )
+
+const SPR_REDIS_DB = 0
 
 var Ctx = context.Background()
 
 var RedisClient *redis.Client
 
-func InitRedisClient(addr string, port int, db int, userName string, password string) error {
+func InitRedisClient(addr string, port int, userName string, password string) error {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     addr + ":" + strconv.Itoa(port),
 		Username: userName,
-		Password: password, // no password set
-		DB:       db,       // use default DB
+		Password: password,     // no password set
+		DB:       SPR_REDIS_DB, // use default DB
 	})
 
 	_, err := rdb.Ping(Ctx).Result()
