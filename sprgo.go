@@ -2,11 +2,12 @@ package SPR_go
 
 import (
 	"errors"
-	"github.com/daqnext/SPR-go/goredis"
-	"github.com/daqnext/SPR-go/sprjob"
 	"math/rand"
 	"sync"
 	"time"
+
+	"github.com/daqnext/SPR-go/goredis"
+	"github.com/daqnext/SPR-go/sprjob"
 )
 
 type SprJobMgr struct {
@@ -16,13 +17,12 @@ type SprJobMgr struct {
 type RedisConfig struct {
 	Addr     string
 	Port     int
-	Db       int
 	UserName string
 	Password string
 }
 
 func New(config RedisConfig) (*SprJobMgr, error) {
-	err := goredis.InitRedisClient(config.Addr, config.Port, config.Db, config.UserName, config.Password)
+	err := goredis.InitRedisClient(config.Addr, config.Port, config.UserName, config.Password)
 	if err != nil {
 		return nil, errors.New("redis connect error")
 	}

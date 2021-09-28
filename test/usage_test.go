@@ -1,10 +1,11 @@
 package test
 
 import (
-	SPR_go "github.com/daqnext/SPR-go"
 	"log"
 	"testing"
 	"time"
+
+	SPR_go "github.com/daqnext/SPR-go"
 )
 
 func Test_usage(t *testing.T) {
@@ -22,7 +23,6 @@ func Test_usage(t *testing.T) {
 	sMgr, err := SPR_go.New(SPR_go.RedisConfig{
 		Addr:     "127.0.0.2",
 		Port:     6379,
-		Db:       5,
 		Password: "123456",
 	})
 	if err != nil {
