@@ -1,5 +1,11 @@
 github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
+github.com/daqnext/fastjson v1.0.0 h1:uiJsz666J0rf2WTVOkPXUaYqXclSkGNCtcxxn/E/Dqs=
+github.com/daqnext/fastjson v1.0.0/go.mod h1:/l0vJWbS20xVMFJbyMUW6/x5FRpz79gGPm6oolCVFCI=
+github.com/daqnext/go-smart-routine v0.1.1 h1:N+2RBtVKO3FhgNzYsF2cmXIK+H9p11d2fdJd2G+kMVY=
+github.com/daqnext/go-smart-routine v0.1.1/go.mod h1:pSXzjZuiMUh/I7dmQ68qYyZ7tQXyFg2qNOqtHFxX8C0=
+github.com/daqnext/jsonparser v1.1.2 h1:wvFbVlDrc/CHST0pBUkMBi+g/jdHAlDWTGS1OnQOQu8=
+github.com/daqnext/jsonparser v1.1.2/go.mod h1:B0HLHwPJV3n69nZ2Ei8Np/BVHEotzvvEWpCc/FQ7p80=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=

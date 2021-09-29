@@ -21,9 +21,8 @@ func Test_usage(t *testing.T) {
 	//	Password string
 	//}
 	sMgr, err := SPR_go.New(SPR_go.RedisConfig{
-		Addr:     "127.0.0.2",
-		Port:     6379,
-		Password: "123456",
+		Addr: "127.0.0.1",
+		Port: 6379,
 	})
 	if err != nil {
 		log.Println(err)

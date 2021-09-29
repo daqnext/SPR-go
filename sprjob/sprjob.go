@@ -3,6 +3,7 @@ package sprjob
 import (
 	"fmt"
 	"github.com/daqnext/SPR-go/goredis"
+	"github.com/daqnext/go-smart-routine/sr"
 	"github.com/go-redis/redis/v8"
 	"math/rand"
 	"time"
@@ -34,7 +35,7 @@ func New(name string) *SprJob {
 
 func (s *SprJob) StartLoop() {
 	//s.loop()
-	go func() {
+	sr.New_Panic_Redo(func() {
 		for {
 			if s.StopFlag {
 				return
@@ -48,7 +49,7 @@ func (s *SprJob) StartLoop() {
 				time.Sleep(time.Duration(toSleepSecs) * time.Second)
 			}
 		}
-	}()
+	}).Start()
 }
 
 func (s *SprJob) StopLoop() {
