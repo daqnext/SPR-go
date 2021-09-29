@@ -12,14 +12,14 @@ const SPR_REDIS_DB = 0
 
 var Ctx = context.Background()
 
-var RedisClient *redis.Client
+var RedisClient *redis.ClusterClient
 
 func InitRedisClient(addr string, port int, userName string, password string) error {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     addr + ":" + strconv.Itoa(port),
+
+	rdb := redis.NewClusterClient(&redis.ClusterOptions{
+		Addrs:    []string{addr + ":" + strconv.Itoa(port)},
 		Username: userName,
-		Password: password,     // no password set
-		DB:       SPR_REDIS_DB, // use default DB
+		Password: password,
 	})
 
 	_, err := rdb.Ping(Ctx).Result()
