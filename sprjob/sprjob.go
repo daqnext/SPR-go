@@ -2,11 +2,12 @@ package sprjob
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
+
 	"github.com/daqnext/SPR-go/goredis"
 	"github.com/daqnext/go-smart-routine/sr"
 	"github.com/go-redis/redis/v8"
-	"math/rand"
-	"time"
 )
 
 const LoopIntervalSec = 15
@@ -19,6 +20,10 @@ type SprJob struct {
 	LoopIntervalSec int
 	StopFlag        bool
 	LastRuntime     int64
+}
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
 }
 
 func New(name string) *SprJob {

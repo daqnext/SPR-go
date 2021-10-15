@@ -21,12 +21,15 @@ type RedisConfig struct {
 	Password string
 }
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
 func New(config RedisConfig) (*SprJobMgr, error) {
 	err := goredis.InitRedisClient(config.Addr, config.Port, config.UserName, config.Password)
 	if err != nil {
 		return nil, errors.New("redis connect error")
 	}
-	rand.Seed(time.Now().UnixNano())
 	sMgr := &SprJobMgr{}
 	return sMgr, nil
 }
