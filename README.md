@@ -9,6 +9,7 @@ go get github.com/daqnext/SPR-go
 
 ```go
 import (
+    localLog "github.com/daqnext/LocalLog/log"
     SPR_go "github.com/daqnext/SPR-go"
     "log"
     "time"
@@ -26,12 +27,16 @@ func Test_usage(t *testing.T) {
     //	UserName string
     //	Password string
     //}
+
+	lg, err := localLog.New("logs", 10, 10, 10)
+	if err != nil {
+	panic(err)
+	}
+	
     sMgr,err:=SPR_go.New(SPR_go.RedisConfig{
         Addr:     "127.0.0.1",
         Port:     6379,
-        Db:       5,
-        Password: "123456",
-    })
+    },lg)
     if err != nil {
         log.Println(err)
         return
