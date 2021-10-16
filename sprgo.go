@@ -28,6 +28,9 @@ func init() {
 }
 
 func New(config RedisConfig, localLogger *localLog.LocalLog) (*SprJobMgr, error) {
+	if localLogger == nil {
+		return nil, errors.New("localLogger is nil")
+	}
 	err := goredis.InitRedisClient(config.Addr, config.Port, config.UserName, config.Password, localLogger)
 	if err != nil {
 		return nil, errors.New("redis connect error")

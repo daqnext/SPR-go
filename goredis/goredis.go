@@ -16,7 +16,6 @@ var RedisClient *redis.ClusterClient
 var lg *localLog.LocalLog
 
 func InitRedisClient(addr string, port int, userName string, password string, llog *localLog.LocalLog) error {
-
 	rdb := redis.NewClusterClient(&redis.ClusterOptions{
 		Addrs:    []string{addr + ":" + strconv.Itoa(port)},
 		Username: userName,
