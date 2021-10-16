@@ -2,6 +2,7 @@ package sprjob
 
 import (
 	"fmt"
+	localLog "github.com/daqnext/LocalLog/log"
 	"math/rand"
 	"time"
 
@@ -38,7 +39,7 @@ func New(name string) *SprJob {
 	return s
 }
 
-func (s *SprJob) StartLoop() {
+func (s *SprJob) StartLoop(llog *localLog.LocalLog) {
 	//s.loop()
 	sr.New_Panic_Redo(func() {
 		for {
@@ -54,7 +55,7 @@ func (s *SprJob) StartLoop() {
 				time.Sleep(time.Duration(toSleepSecs) * time.Second)
 			}
 		}
-	}).Start()
+	}, llog).Start()
 }
 
 func (s *SprJob) StopLoop() {

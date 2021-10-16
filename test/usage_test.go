@@ -1,7 +1,7 @@
 package test
 
 import (
-	"log"
+	localLog "github.com/daqnext/LocalLog/log"
 	"testing"
 	"time"
 
@@ -20,12 +20,18 @@ func Test_usage(t *testing.T) {
 	//	UserName string
 	//	Password string
 	//}
+
+	lg, err := localLog.New("logs", 10, 10, 10)
+	if err != nil {
+		panic(err)
+	}
+
 	sMgr, err := SPR_go.New(SPR_go.RedisConfig{
 		Addr: "127.0.0.1",
 		Port: 6379,
-	})
+	}, lg)
 	if err != nil {
-		log.Println(err)
+		lg.Errorln(err)
 		return
 	}
 
@@ -33,11 +39,11 @@ func Test_usage(t *testing.T) {
 	//the process with same job name will scramble for the master token
 	err = sMgr.AddJobName("testjob")
 	if err != nil {
-		log.Println(err)
+		lg.Println(err)
 	}
 	err = sMgr.AddJobName("testjob2")
 	if err != nil {
-		log.Println(err)
+		lg.Println(err)
 	}
 
 	// use function IsMaster("jobName") to check whether the process get the master token or not
@@ -45,8 +51,8 @@ func Test_usage(t *testing.T) {
 	go func() {
 		for {
 			time.Sleep(time.Second)
-			log.Println("testjob is master:", sMgr.IsMaster("testjob"))
-			log.Println("testjob2 is master:", sMgr.IsMaster("testjob2"))
+			lg.Println("testjob is master:", sMgr.IsMaster("testjob"))
+			lg.Println("testjob2 is master:", sMgr.IsMaster("testjob2"))
 		}
 	}()
 

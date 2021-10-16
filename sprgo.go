@@ -6,12 +6,14 @@ import (
 	"sync"
 	"time"
 
+	localLog "github.com/daqnext/LocalLog/log"
 	"github.com/daqnext/SPR-go/goredis"
 	"github.com/daqnext/SPR-go/sprjob"
 )
 
 type SprJobMgr struct {
 	jobMap sync.Map
+	llog   *localLog.LocalLog
 }
 
 type RedisConfig struct {
@@ -25,12 +27,14 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func New(config RedisConfig) (*SprJobMgr, error) {
-	err := goredis.InitRedisClient(config.Addr, config.Port, config.UserName, config.Password)
+func New(config RedisConfig, localLogger *localLog.LocalLog) (*SprJobMgr, error) {
+	err := goredis.InitRedisClient(config.Addr, config.Port, config.UserName, config.Password, localLogger)
 	if err != nil {
 		return nil, errors.New("redis connect error")
 	}
-	sMgr := &SprJobMgr{}
+	sMgr := &SprJobMgr{
+		llog: localLogger,
+	}
 	return sMgr, nil
 }
 
@@ -43,7 +47,7 @@ func (smgr *SprJobMgr) AddJobName(jobName string) error {
 	job := sprjob.New(jobName)
 	smgr.jobMap.Store(jobName, job)
 	//start loop
-	job.StartLoop()
+	job.StartLoop(smgr.llog)
 	return nil
 }
 
