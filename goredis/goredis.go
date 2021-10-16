@@ -25,10 +25,14 @@ func InitRedisClient(addr string, port int, userName string, password string, ll
 
 	_, err := rdb.Ping(Ctx).Result()
 	if err != nil {
-		lg.Errorln("SPR-go Redis connect failed")
+		if lg != nil {
+			lg.Errorln("SPR-go Redis connect failed")
+		}
 		return err
 	}
-	lg.Println("SPR-go Redis connect success")
+	if lg != nil {
+		lg.Println("SPR-go Redis connect success")
+	}
 	RedisClient = rdb
 	return nil
 }
