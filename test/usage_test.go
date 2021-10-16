@@ -1,25 +1,14 @@
 package test
 
 import (
-	localLog "github.com/daqnext/LocalLog/log"
 	"testing"
 	"time"
 
+	localLog "github.com/daqnext/LocalLog/log"
 	SPR_go "github.com/daqnext/SPR-go"
 )
 
 func Test_usage(t *testing.T) {
-	//new instance
-	//init redis with config
-	//err != nil if connect to redis failed
-
-	//type RedisConfig struct{
-	//	Addr string
-	//	Port int
-	//	Db int
-	//	UserName string
-	//	Password string
-	//}
 
 	lg, err := localLog.New("logs", 10, 10, 10)
 	if err != nil {
