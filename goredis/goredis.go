@@ -2,8 +2,9 @@ package goredis
 
 import (
 	"context"
-	localLog "github.com/daqnext/LocalLog/log"
 	"strconv"
+
+	localLog "github.com/daqnext/LocalLog/log"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -31,7 +32,7 @@ func InitRedisClient(addr string, port int, userName string, password string, ll
 		return err
 	}
 	if lg != nil {
-		lg.Println("SPR-go Redis connect success")
+		lg.Infoln("SPR-go Redis connect success")
 	}
 	RedisClient = rdb
 	return nil

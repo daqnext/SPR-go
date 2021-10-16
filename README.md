@@ -8,68 +8,80 @@ go get github.com/daqnext/SPR-go
 ```
 
 ```go
+
+
+package SPR_go
+
 import (
-    localLog "github.com/daqnext/LocalLog/log"
-    SPR_go "github.com/daqnext/SPR-go"
-    "log"
-    "time"
+	"errors"
+	"math/rand"
+	"sync"
+	"time"
+
+	localLog "github.com/daqnext/LocalLog/log"
+	"github.com/daqnext/SPR-go/goredis"
+	"github.com/daqnext/SPR-go/sprjob"
 )
 
-func Test_usage(t *testing.T) {
-    //new instance
-    //init redis with config
-    //If connect to redis failed, return err
-
-    //type RedisConfig struct{
-    //	Addr string
-    //	Port int
-    //	Db int
-    //	UserName string
-    //	Password string
-    //}
-
-	lg, err := localLog.New("logs", 10, 10, 10)
-	if err != nil {
-	panic(err)
-	}
-	
-    sMgr,err:=SPR_go.New(SPR_go.RedisConfig{
-        Addr:     "127.0.0.1",
-        Port:     6379,
-    },lg)
-    if err != nil {
-        log.Println(err)
-        return
-    }
-
-    //add job with unique job name which used in redis
-    //the process with same job name will scramble for the master token
-    err = sMgr.AddJobName("testjob")
-    if err != nil {
-        log.Println(err)
-    }
-    err = sMgr.AddJobName("testjob2")
-    if err != nil {
-        log.Println(err)
-    }
-
-    // use function IsMaster("jobName") to check whether the process get the master token or not
-    // if return true means get the master token
-    go func() {
-        for {
-            time.Sleep(time.Second)
-            log.Println("testjob is master:", sMgr.IsMaster("testjob"))
-            log.Println("testjob2 is master:", sMgr.IsMaster("testjob2"))
-        }
-    }()
-
-    // use function RemoveJobName("jobName") to remove the job
-    // removed job always return false when use IsMaster("jobName")
-    time.AfterFunc(time.Second*30, func() {
-        sMgr.RemoveJobName("testjob2")
-    })
-
-    time.Sleep(1 * time.Hour)
-
+type SprJobMgr struct {
+	jobMap sync.Map
+	llog   *localLog.LocalLog
 }
+
+type RedisConfig struct {
+	Addr     string
+	Port     int
+	UserName string
+	Password string
+}
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+func New(config RedisConfig, localLogger *localLog.LocalLog) (*SprJobMgr, error) {
+	err := goredis.InitRedisClient(config.Addr, config.Port, config.UserName, config.Password, localLogger)
+	if err != nil {
+		return nil, errors.New("redis connect error")
+	}
+	sMgr := &SprJobMgr{
+		llog: localLogger,
+	}
+	return sMgr, nil
+}
+
+func (smgr *SprJobMgr) AddJobName(jobName string) error {
+	_, exist := smgr.jobMap.Load(jobName)
+	if exist {
+		return errors.New("job already exist")
+	}
+	//new job
+	job := sprjob.New(jobName)
+	smgr.jobMap.Store(jobName, job)
+	//start loop
+	job.StartLoop(smgr.llog)
+	return nil
+}
+
+func (smgr *SprJobMgr) RemoveJobName(jobName string) {
+	job, exist := smgr.jobMap.Load(jobName)
+	if !exist {
+		return
+	}
+	//stop
+	job.(*sprjob.SprJob).StopLoop()
+	//delete
+	smgr.jobMap.Delete(jobName)
+}
+
+func (smgr *SprJobMgr) IsMaster(jobName string) bool {
+	job, exist := smgr.jobMap.Load(jobName)
+	if !exist {
+		return false
+	}
+	return job.(*sprjob.SprJob).IsMaster
+}
+
+
+
 ```
